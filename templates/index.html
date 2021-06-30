@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css" />
+    <script src="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script type="text/javascript" async
+    src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML">
+  </script>
+    <title>EO Hackathon Submission (Wilson Cheung)</title>
+  </head>
+  <body>
+    <center>
+      <h1><b>NASA Ozone Monitoring Instrument - \(NO_2\)</b></h1>
+      <div class="container" id="control_panel_1">
+        <form action="/" method ="post" enctype="multipart/form-data" id="form">
+          <div id="map" style="width: 1000px; height: 500px;"></div>
+          <input id="slide" style="width: 1000px;" type="range" min="0" max="64" value="64" name="slide">
+          <b><div id="sliderAmount">May 2021</div></b>
+        </form>
+      
+    </center>
+
+    <!--- SCRIPTS --->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+
+</body>
+    <script>
+
+      var bounds = new L.LatLngBounds(
+                new L.LatLng(-90, -180),
+                new L.LatLng(90, 180));
+      var map = L.map('map',  {
+
+          zoomControl: true,
+          zoom: 2,
+          minZoom: 2,
+          maxZoom: 10,
+          maxBounds: bounds,
+          maxBoundsViscosity: 1.0
+      });
+
+      var basemaps = {
+          'Climate Map': L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
+          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+        }),
+      };
+
+      L.control.layers(basemaps).addTo(map);
+
+      basemaps["Climate Map"].addTo(map);
+      map.fitBounds(bounds);
+
+      var results = L.imageOverlay(
+           "{{ asdf }}" ,
+           bounds).addTo(map);
+
+      var slide = document.getElementById('slide'),
+      sliderDiv = document.getElementById("sliderAmount");
+      var months = [ "January ", "February ", "March ", "April ", "May ", "June ", 
+              "July ", "August ", "September ", "October ", "November ", "December " ];
+      var current;
+      var delayTimer;
+      var results;
+
+      slide.oninput = function() {
+          clearTimeout(delayTimer);
+          current = this.value;
+          var month = months[(current % 12)];
+          var year = (Math.floor(current/12) + 2016).toString();
+          sliderDiv.innerHTML = month.concat(year);
+          delayTimer = setTimeout(function() {
+          $.post({
+                url: '/',
+                data: $('form').serialize(),
+                success: function(response){
+                    //alert(response);
+                    //alert(response.volume);             // works with jsonify()
+                    //alert(JSON.parse(response).volume); // works with json.dumps()
+                    asdf = JSON.parse(response).html;
+                    map.removeLayer(results);
+                    results = L.imageOverlay(
+                      asdf ,
+                      bounds).addTo(map);
+                },
+                error: function(error){
+                    //alert(response);
+                    console.log(error);
+                }
+            });
+            }, 100);
+          }
+
+
+</script>
+</html>
