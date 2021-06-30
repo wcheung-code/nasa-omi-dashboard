@@ -3,6 +3,5 @@ folium==0.12.1
 numpy==1.21.0
 Flask==2.0.1
 matplotlib==3.4.2
-osgeo==0.0.1
 wget==3.2
 GDAL==3.3.0
