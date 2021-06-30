@@ -13,11 +13,16 @@ import wget
 
 from flask import Flask, request, redirect, url_for, render_template, json, render_template_string, jsonify
 
+
 app = Flask(__name__)
 
 @app.route('/', methods=['GET', 'POST'])
 def control_panel():
-    print('request.form:', request.form)
+#    print('request.form:', request.form)
+    if not os.path.exists("./image_data/OMNO2d_HRM/{}.p".format('image_data')):
+        os.makedirs("./image_data/OMNO2d_HRM/", exist_ok=True)
+        wget.download('https://eo-dashboard-nasa.s3.amazonaws.com/image_data.p', out = "./image_data/OMNO2d_HRM/")
+    image_data = pickle.load(open( "./image_data/OMNO2d_HRM/{}.p".format('image_data'), "rb" ))
     if request.method == 'POST':
         volume = request.form.get('slide')
         convert = lambda x: tuple(sum(y) for y in zip((2016, 1), divmod(int(x), 12)))
@@ -30,8 +35,4 @@ def control_panel():
     return render_template('index.html', asdf = image_data[int('64')])
 
 if __name__ == '__main__':
-    if not os.path.exists("./image_data/OMNO2d_HRM/{}.p".format('image_data')):
-        os.makedirs("./image_data/OMNO2d_HRM/", exist_ok=True)
-        wget.download('https://eo-dashboard-nasa.s3.amazonaws.com/image_data.p', out = "./image_data/OMNO2d_HRM/")
-    image_data = pickle.load(open( "./image_data/OMNO2d_HRM/{}.p".format('image_data'), "rb" ))
     app.run(debug=True, use_reloader=False)
