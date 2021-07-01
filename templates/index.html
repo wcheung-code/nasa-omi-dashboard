@@ -69,6 +69,7 @@
       var current;
       var delayTimer;
       var results;
+      var cache = {};
 
       slide.oninput = function() {
           clearTimeout(delayTimer);
@@ -76,26 +77,36 @@
           var month = months[(current % 12)];
           var year = (Math.floor(current/12) + 2016).toString();
           sliderDiv.innerHTML = month.concat(year);
-          delayTimer = setTimeout(function() {
-          $.post({
-                url: '/',
-                data: $('form').serialize(),
-                success: function(response){
-                    //alert(response);
-                    //alert(response.volume);             // works with jsonify()
-                    //alert(JSON.parse(response).volume); // works with json.dumps()
-                    asdf = JSON.parse(response).html;
-                    map.removeLayer(results);
-                    results = L.imageOverlay(
-                      asdf ,
-                      bounds).addTo(map);
-                },
-                error: function(error){
-                    //alert(response);
-                    console.log(error);
-                }
-            });
-            }, 100);
+          if (Object.keys(cache).includes(current)) {
+            map.removeLayer(results);
+            results = L.imageOverlay(
+              cache[current],
+              bounds).addTo(map);
+          }
+          else {
+            delayTimer = setTimeout(function() {
+            $.post({
+                  url: '/',
+                  data: $('form').serialize(),
+                  success: function(response){
+                      //alert(response);
+                      //alert(response.volume);             // works with jsonify()
+                      //alert(JSON.parse(response).volume); // works with json.dumps()
+                      asdf = JSON.parse(response).html;
+                      cache[current] = asdf;
+                      map.removeLayer(results);
+                      results = L.imageOverlay(
+                        asdf ,
+                        bounds).addTo(map);
+                  },
+                  error: function(error){
+                      //alert(response);
+                      console.log(error);
+                  }
+              });
+              }, 100);
+           }
+
           }
 
 

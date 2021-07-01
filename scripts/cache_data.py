@@ -2,14 +2,9 @@ from osgeo import gdal
 import matplotlib.pyplot as plt
 import numpy as np
 import folium
-from folium.plugins import Draw
-from folium.plugins import DualMap
 import matplotlib.colors
-import matplotlib.pylab as pl
 from matplotlib.colors import ListedColormap
 import pickle
-import re
-
 import os
 
 def data(path):

@@ -1,17 +1,9 @@
-import matplotlib.pyplot as plt
-import numpy as np
-import folium
-from folium.plugins import Draw
-from folium.plugins import DualMap
-import matplotlib.colors
-import matplotlib.pylab as pl
-from matplotlib.colors import ListedColormap
+
 import pickle
-import re
 import os
 import wget
 
-from flask import Flask, request, redirect, url_for, render_template, json, render_template_string, jsonify
+from flask import Flask, request, render_template, json
 
 
 app = Flask(__name__)
