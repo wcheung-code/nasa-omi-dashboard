@@ -14,7 +14,8 @@ def control_panel():
     if not os.path.exists("./image_data/OMNO2d_HRM/{}.p".format('image_data')):
         os.makedirs("./image_data/OMNO2d_HRM/", exist_ok=True)
         wget.download('https://eo-dashboard-nasa.s3.amazonaws.com/image_data.p', out = "./image_data/OMNO2d_HRM/")
-    image_data = pickle.load(open( "./image_data/OMNO2d_HRM/{}.p".format('image_data'), "rb" ))
+    if request.method == 'GET':
+        image_data = pickle.load(open( "./image_data/OMNO2d_HRM/{}.p".format('image_data'), "rb" ))
     if request.method == 'POST':
         volume = request.form.get('slide')
         convert = lambda x: tuple(sum(y) for y in zip((2016, 1), divmod(int(x), 12)))
