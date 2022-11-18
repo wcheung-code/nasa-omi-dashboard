@@ -74,8 +74,8 @@
       slide.oninput = function() {
           clearTimeout(delayTimer);
           current = this.value;
-          var month = months[(current % 12)];
-          var year = (Math.floor(current/12) + 2016).toString();
+          var month = months[((current + 10 - 1) % 12)];
+          var year = (Math.floor((current + 10 - 1) /12) + 2004).toString();
           sliderDiv.innerHTML = month.concat(year);
           if (Object.keys(cache).includes(current)) {
             map.removeLayer(results);
